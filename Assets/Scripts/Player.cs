@@ -1,32 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private HelthBar _healthBar;
     [SerializeField] private float _maxHealth;
-  
+
     private float _health;
-    
+    private float _value = 10;
+
+    public static Action<float, float> OnHealthChange;
+    public static Action<float, float> OnTakeDamage;
+    public static Action<float, float> OnHealed;
+
     public float Health
     {
-        get 
-        { 
-           return _health; 
+        get
+        {
+            return _health;
         }
-       
+
         set
         {
             _health = value;
-            
-            if(_health<=0)
+
+            if (_health <= 0)
             {
                 _health = 0;
             }
-            
-            _healthBar.UpdateHealthbar(_maxHealth, _health);
+
+            OnHealthChange?.Invoke(_maxHealth, _health);
         }
     }
 
@@ -39,39 +44,23 @@ public class Player : MonoBehaviour
     {
         float currentHealth = Health;
         float targetHealth = currentHealth - damageValue;
-        StartCoroutine(SmoothSlide(currentHealth, targetHealth));
+        OnTakeDamage?.Invoke(currentHealth, targetHealth);
     }
-    
+
     private void Heal(float damageValue)
     {
         float currentHealth = Health;
         float targetHealth = currentHealth + damageValue;
-        StartCoroutine(SmoothSlide(currentHealth, targetHealth));
+        OnHealed?.Invoke(currentHealth, targetHealth);
     }
 
     public void OnButtonHpAddClick()
     {
-        Heal(10);
+        Heal(_value);
     }
 
     public void OnButtonHitClick()
     {
-        TakeDamage(10);
-    }
-
-    private IEnumerator SmoothSlide(float startValue, float endValue)
-    {
-        float elapsedTime = 0f;
-        float duration = 0.5f;
-
-        while (elapsedTime < duration)
-        {
-            float currentValue = Mathf.Lerp(startValue, endValue, elapsedTime / duration);
-            Health = currentValue;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        Health = endValue;
+        TakeDamage(_value);
     }
 }

@@ -25,29 +25,28 @@ public class HelthBar : MonoBehaviour
     {
         Player.OnHealthChange -= UpdateHealthbar;
         Player.OnTakeDamage -= ChangeSlide;
-        Player.OnHealed += ChangeSlide;
+        Player.OnHealed -= ChangeSlide;
     }
 
-    public void UpdateHealthbar(float maxHealth, float currentHealth)
+    public void UpdateHealthbar( float currentHealth)
     {
-        _healthBarSlider.maxValue = maxHealth;
-        _healthBarSlider.minValue = 0;
-        _healthBarSlider.value = currentHealth;
+       _healthBarSlider.value = currentHealth;
     }
 
-    public void ChangeSlide(float currentHealth, float targetHealth)
+    public void ChangeSlide(float targetHealth)
     {
-        StartCoroutine(SmoothSlide(currentHealth, targetHealth));
+        StartCoroutine(SmoothSlide(targetHealth));
     }
 
-    private IEnumerator SmoothSlide(float startValue, float endValue)
+    private IEnumerator SmoothSlide(float endValue)
     {
         float elapsedTime = 0f;
         float duration = 0.5f;
+        float startValue = _healthBarSlider.value;
 
-        while (elapsedTime < duration)
+        while (startValue != endValue)
         {
-            float currentValue = Mathf.Lerp(startValue, endValue, elapsedTime / duration);
+            float currentValue = Mathf.MoveTowards(startValue, endValue, elapsedTime / duration ); 
             _healthBarSlider.value = currentValue;
             elapsedTime += Time.deltaTime;
             yield return null;

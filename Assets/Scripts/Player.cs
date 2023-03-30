@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _maxHealth;
-
+  
     private float _health;
-    private float _value = 10;
-
-    public static Action<float, float> OnHealthChange;
-    public static Action<float, float> OnTakeDamage;
-    public static Action<float, float> OnHealed;
-
+   
+    public static Action<float> OnHealthChange;
+    public static Action<float> OnTakeDamage;
+    public static Action<float> OnHealed;
+   
     public float Health
     {
         get
@@ -26,41 +24,40 @@ public class Player : MonoBehaviour
         {
             _health = value;
 
+            if (_maxHealth > 100)
+            {
+                _health = 100;
+            }
+
             if (_health <= 0)
             {
                 _health = 0;
             }
-
-            OnHealthChange?.Invoke(_maxHealth, _health);
-        }
+         }
     }
 
     private void Start()
     {
-        Health = _maxHealth;
+        _health = _maxHealth;
     }
 
-    private void TakeDamage(float damageValue)
+   private void ChangeHelth(float value)
     {
-        float currentHealth = Health;
-        float targetHealth = currentHealth - damageValue;
-        OnTakeDamage?.Invoke(currentHealth, targetHealth);
+        Health = value;
+        OnHealthChange?.Invoke(Health);
     }
 
-    private void Heal(float damageValue)
+    public void TakeDamage(float damageValue)
     {
-        float currentHealth = Health;
-        float targetHealth = currentHealth + damageValue;
-        OnHealed?.Invoke(currentHealth, targetHealth);
+        float targetHealth = Health - damageValue;
+        ChangeHelth(targetHealth);
+        OnTakeDamage?.Invoke( targetHealth);
     }
 
-    public void OnButtonHpAddClick()
+    public void Heal(float damageValue)
     {
-        Heal(_value);
-    }
-
-    public void OnButtonHitClick()
-    {
-        TakeDamage(_value);
+        float targetHealth = Health + damageValue;
+        ChangeHelth(targetHealth);
+        OnHealed?.Invoke( targetHealth);
     }
 }

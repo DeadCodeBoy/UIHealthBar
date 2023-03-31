@@ -8,13 +8,13 @@ using UnityEngine.UI;
 public class HelthBar : MonoBehaviour
 {
     private Slider _healthBarSlider;
-    private bool IsStart = false;
- 
+    private Coroutine _checkCorutine;
+
     private void Start()
     {
         _healthBarSlider = GetComponent<Slider>();
     }
-    
+
     private void OnEnable()
     {
         Player.OnHealthChange += UpdateHealthbar;
@@ -29,35 +29,32 @@ public class HelthBar : MonoBehaviour
         Player.OnHealed -= ChangeSlide;
     }
 
-    public void UpdateHealthbar( float currentHealth)
+    public void UpdateHealthbar(float currentHealth)
     {
-       _healthBarSlider.value = currentHealth;
+        _healthBarSlider.value = currentHealth;
     }
-
+        
     public void ChangeSlide(float targetHealth)
     {
-        if (IsStart == false)
+        if (_checkCorutine != null)
         {
-            StartCoroutine(SmoothSlide(targetHealth));
+            StopCoroutine(_checkCorutine);
         }
+
+       _checkCorutine= StartCoroutine(SmoothSlide(targetHealth));
     }
 
     private IEnumerator SmoothSlide(float endValue)
     {
-        IsStart = true;
-        float elapsedTime = 0f;
-        float duration = 0.5f;
         float startValue = _healthBarSlider.value;
 
         while (startValue != endValue)
         {
-            float currentValue = Mathf.MoveTowards(startValue, endValue, elapsedTime / duration ); 
+            float currentValue = Mathf.MoveTowards(startValue, endValue, Time.deltaTime);  
             _healthBarSlider.value = currentValue;
-            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         _healthBarSlider.value = endValue;
-        IsStart = false;
     }
 }

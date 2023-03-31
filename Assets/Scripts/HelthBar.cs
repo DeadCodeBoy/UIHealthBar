@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class HelthBar : MonoBehaviour
 {
     private Slider _healthBarSlider;
+    private bool IsStart = false;
  
     private void Start()
     {
@@ -35,11 +36,15 @@ public class HelthBar : MonoBehaviour
 
     public void ChangeSlide(float targetHealth)
     {
-        StartCoroutine(SmoothSlide(targetHealth));
+        if (IsStart == false)
+        {
+            StartCoroutine(SmoothSlide(targetHealth));
+        }
     }
 
     private IEnumerator SmoothSlide(float endValue)
     {
+        IsStart = true;
         float elapsedTime = 0f;
         float duration = 0.5f;
         float startValue = _healthBarSlider.value;
@@ -53,5 +58,6 @@ public class HelthBar : MonoBehaviour
         }
 
         _healthBarSlider.value = endValue;
+        IsStart = false;
     }
 }

@@ -12,7 +12,12 @@ public class Player : MonoBehaviour
     public static Action<float> OnHealthChange;
     public static Action<float> OnTakeDamage;
     public static Action<float> OnHealed;
-   
+
+    private void Start()
+    {
+        _health = _maxHealth;
+    }
+
     public float Health
     {
         get
@@ -32,18 +37,24 @@ public class Player : MonoBehaviour
             if (_health <= 0)
             {
                 _health = 0;
+                Debug.Log("you die");
             }
          }
     }
 
-    private void Start()
-    {
-        _health = _maxHealth;
-    }
-
-   private void ChangeHelth(float value)
+    private void ChangeHelth(float value)
     {
         Health = value;
+        
+        if (Health<0)
+        {
+            Health = 0;
+        }
+
+        if (Health>100)
+        {
+            Health = _maxHealth;
+        }
         OnHealthChange?.Invoke(Health);
     }
 

@@ -50,11 +50,8 @@ public class HelthBar : MonoBehaviour
 
         while (startValue != endValue)
         {
-            float currentValue = Mathf.MoveTowards(startValue, endValue, Time.deltaTime);  
-            _healthBarSlider.value = currentValue;
+            _healthBarSlider.value = Mathf.MoveTowards(startValue, endValue, Time.deltaTime);  
             yield return null;
         }
-
-        _healthBarSlider.value = endValue;
     }
 }

@@ -18,12 +18,11 @@ public class Player : MonoBehaviour
         _health = _maxHealth;
     }
 
-    private float ChangeHelth(float value)
+    private void ChangeHelth(float value)
     {
         _health = value;
-        _health = Mathf.Clamp(_health, 0, 100);
+        _health = Mathf.Clamp(value, 0, _maxHealth);
         OnHealthChange?.Invoke(_health);
-        return _health;
     }
 
     public void TakeDamage(float damageValue)
@@ -33,9 +32,9 @@ public class Player : MonoBehaviour
         OnTakeDamage?.Invoke(targetHealth);
     }
 
-    public void Heal(float damageValue)
+    public void Heal(float healValue)
     {
-        float targetHealth = _health + damageValue;
+        float targetHealth = _health + healValue;
         ChangeHelth(targetHealth);
         OnHealed?.Invoke(targetHealth);
     }
